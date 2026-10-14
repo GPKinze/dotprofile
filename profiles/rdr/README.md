@@ -3,7 +3,7 @@
 A second personal appearance preset for **Umbriel + Noctalia**, with its own bar layout, wallpaper, palette, and supported visual settings.
 
 > [!IMPORTANT]
-> **Profile documentation draft — not installable yet.** The theme is still being refined. This folder does not contain a reviewed release package; the final wallpaper source and redistribution permissions still need confirmation.
+> **Profile documentation draft — not installable yet.** The theme is still being refined. This folder does not contain a reviewed release package; the original artist attribution and wallpaper redistribution permissions still need confirmation.
 
 ## Appearance
 
@@ -16,13 +16,13 @@ A second personal appearance preset for **Umbriel + Noctalia**, with its own bar
 | Detail | Information |
 | --- | --- |
 | Hosting site | [Wallhaven](https://wallhaven.cc/) |
-| **Potential source page** | [wallhaven.cc/w/powrge](https://wallhaven.cc/w/powrge) |
+| **Confirmed wallpaper source** | [wallhaven.cc/w/powrge](https://wallhaven.cc/w/powrge) — confirmed by the profile author |
 | Original creator | **Not verified** |
 | Wallhaven uploader | **Not verified**; not necessarily the creator |
 | License / redistribution permission | **Not verified** |
 | Local edits or resizing | **To be confirmed** |
 
-The potential source URL above was inferred from an earlier local wallpaper filename. **The final RDR profile wallpaper has not been matched against the page yet.** Confirm the exact image and creator before finalizing these credits.
+The profile author confirmed this Wallhaven page as the source of the RDR wallpaper. **The original artist's identity and redistribution rights are not yet verified**; the Wallhaven uploader should not automatically be treated as the artist.
 
 **No wallpaper image is distributed in this folder.** Credit alone does not authorize redistribution. If permission cannot be established, link to the creator/source and let users obtain the wallpaper separately.
 
