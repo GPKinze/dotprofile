@@ -106,6 +106,18 @@ The project aims to provide:
 
 Keep your own backup of working Umbriel and Noctalia configurations before experimenting. A successful export or dry run does not guarantee that live switching will behave correctly on every setup.
 
+## Profile documentation
+
+Two appearance profiles are being prepared for the first public release:
+
+| Profile | Description | Status |
+| --- | --- | --- |
+| **[Gruvbox Kanji](profiles/gruvbox-kanji/README.md)** | Gruvbox-inspired appearance with five Kanji workspace indicators | Documentation draft |
+| **[RDR](profiles/rdr/README.md)** | Alternate bar layout, wallpaper, and palette | Documentation draft |
+
+> [!NOTE]
+> Both profile pages currently contain **provisional Wallhaven attribution**. The wallpaper IDs came from earlier local filenames; neither image has yet been independently matched to the final saved profile nor cleared for redistribution. **No wallpaper images or installable profile bundles are published in these folders.** Full profiles will be added only after source and rights review.
+
 ## Sharing and contributing
 
 You're welcome to **use, customize, or fork** this project. Importing a profile to your PC **does not change this GitHub repository**.
