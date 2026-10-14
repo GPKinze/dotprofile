@@ -1,6 +1,6 @@
 # Dotprofile
 
-**A lightweight terminal UI for saving, switching, and sharing desktop appearance profiles for [Umbriel](https://github.com/) + [Noctalia](https://noctalia.dev/).**
+**A lightweight terminal UI for saving, switching, and sharing desktop appearance profiles for Umbriel + [Noctalia](https://noctalia.dev/).**
 
 **Made for Umbriel + Noctalia. Shared by us, customized by you.**
 
