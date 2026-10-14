@@ -116,7 +116,7 @@ Two appearance profiles are being prepared for the first public release:
 | **[RDR](profiles/rdr/README.md)** | Alternate bar layout, wallpaper, and palette | Documentation draft |
 
 > [!NOTE]
-> Both profile pages currently contain **provisional Wallhaven attribution**. The wallpaper IDs came from earlier local filenames; neither image has yet been independently matched to the final saved profile nor cleared for redistribution. **No wallpaper images or installable profile bundles are published in these folders.** Full profiles will be added only after source and rights review.
+> The maintainer has **confirmed the Wallhaven source links** for both profiles. Original artist attribution and redistribution permissions have **not** been verified. **No wallpaper images or installable profile bundles are published in these folders.** Full profiles will be added only after rights and release-safety review.
 
 ## Sharing and contributing
 
@@ -127,7 +127,7 @@ When profile submissions open, contributors will be able to suggest new themes t
 ## Project status
 
 > [!CAUTION]
-> **In development.** The local v0.5 engine has passed reported automated and isolated checks, but **live profile switching and recovery have not yet been verified**. The planned protected-default workflow and some TUI options are not necessarily implemented in the current build.
+> **In development — v0.6.2 beta preparation.** The maintainer reports **153 automated tests** and **31 isolated native layout checks** passing. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. Broader compatibility, distribution safety, and clean-install testing remain before publication.
 
 This repository currently contains **documentation only**. Tested source code, installation instructions, and official downloadable profiles will be added after verification.
 
