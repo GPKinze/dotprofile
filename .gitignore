@@ -1,0 +1,39 @@
+# Python caches and environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Local editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Secrets and local overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local backups and throwaway build archives
+backups/
+manual-backups/
+*.bak
+*.backup
+*.tmp
+*.tar.gz
+*.zip
+
+# Profile wallpaper images must be reviewed for redistribution rights
+# before being explicitly added to the public repository.
+profiles/*/wallpaper.*
