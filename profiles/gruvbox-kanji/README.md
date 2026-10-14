@@ -3,7 +3,7 @@
 An appearance preset for **Umbriel + Noctalia**, with a Gruvbox-inspired look and five Kanji workspace indicators: **【 一 二 三 四 五 】**.
 
 > [!IMPORTANT]
-> **Profile documentation draft — not installable yet.** This folder does not contain a reviewed release package. The screenshot, final wallpaper source, and redistribution permissions still need confirmation.
+> **Profile documentation draft — not installable yet.** This folder does not contain a reviewed release package. The preview screenshot, original artist attribution, and wallpaper redistribution permissions still need confirmation.
 
 ## Appearance
 
@@ -16,13 +16,13 @@ An appearance preset for **Umbriel + Noctalia**, with a Gruvbox-inspired look an
 | Detail | Information |
 | --- | --- |
 | Hosting site | [Wallhaven](https://wallhaven.cc/) |
-| **Potential source page** | [wallhaven.cc/w/zyqx1v](https://wallhaven.cc/w/zyqx1v) |
+| **Confirmed wallpaper source** | [wallhaven.cc/w/zyqx1v](https://wallhaven.cc/w/zyqx1v) — confirmed by the profile author |
 | Original creator | **Not verified** |
 | Wallhaven uploader | **Not verified**; not necessarily the creator |
 | License / redistribution permission | **Not verified** |
 | Local edits or resizing | **To be confirmed** |
 
-The potential source URL above was inferred from an earlier local wallpaper filename. **The final Gruvbox profile wallpaper has not been matched against the page yet.** Verify the image and original creator before stating this attribution as final.
+The profile author confirmed this Wallhaven page as the source of the Gruvbox Kanji wallpaper. **The original artist's identity and redistribution rights are not yet verified**; the Wallhaven uploader should not automatically be treated as the artist.
 
 **No wallpaper image is distributed in this folder.** Credit alone does not authorize redistribution. If permission cannot be established, link to the creator/source and let users obtain the wallpaper separately.
 
