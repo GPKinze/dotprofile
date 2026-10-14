@@ -1,5 +1,8 @@
 # Dotprofile
 
+> [!NOTE]
+> **A personal note:** I originally made Dotprofile simply for my own Umbriel + Noctalia setup—to make saving and switching desktop themes easier for myself. I decided to share it publicly in case others find it useful too. You're welcome to try it, fork it, or adapt it to your own preferences. You don't have to follow my setup or keep my default themes. Use what works for you, and please keep a backup before experimenting.
+
 **A lightweight terminal UI for saving, switching, and sharing desktop appearance profiles for Umbriel + [Noctalia](https://noctalia.dev/).**
 
 **Made for Umbriel + Noctalia. Shared by us, customized by you.**
