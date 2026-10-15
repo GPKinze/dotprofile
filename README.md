@@ -114,7 +114,7 @@ Keep your own backup of working Umbriel and Noctalia configurations before exper
 Requires **Linux, Python 3.11+, `tomlkit`, Gum, Umbriel, and Noctalia**. The reviewed schema tests use Noctalia **5.2.1** and Umbriel **0.1.0**; broader compatibility is still beta testing. On Arch/CachyOS, the interactive installer can offer only missing Python/tomlkit/Gum dependencies. It does not install Umbriel, Noctalia, application themes, or unrelated applications.
 
 ```fish
-git clone --branch release/v0.6.2-beta --single-branch https://github.com/GPKinze/dotprofile.git
+git clone https://github.com/GPKinze/dotprofile.git
 cd dotprofile
 ./install.sh
 fish_add_path ~/.local/bin
@@ -127,7 +127,7 @@ For profile previews, export/import, propagation opt-in, workspace warnings, rec
 
 ## Profile documentation
 
-Two appearance profiles are being prepared for the first public release:
+Two appearance profiles are documented for a future curated theme release:
 
 | Profile | Description | Status |
 | --- | --- | --- |
@@ -146,9 +146,9 @@ When profile submissions open, contributors will be able to suggest new themes t
 ## Project status
 
 > [!CAUTION]
-> **Source beta — v0.6.2-beta.** The independently reviewed engine, TUI, installer, automated tests, synthetic fixtures, and safety documentation are now included for pull-request review. **153 automated tests** and **31 isolated native layout operations** pass. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. These maintainer-specific results do not establish broader hardware compatibility; runtime IPC in the automated checks is simulated or suppressed.
+> **Source beta — v0.6.2-beta.** This repository includes the reviewed engine, TUI, installer, automated tests, synthetic fixtures, and safety documentation. **153 automated tests** and **31 isolated native layout operations** pass. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. These maintainer-specific results do not establish broader hardware compatibility; runtime IPC in the automated checks is simulated or suppressed.
 
-The source is based on the reviewed `dotprofile-v0.6.2-beta-source.tar.gz` archive. See [publication verification](docs/PUBLICATION-REVIEW.md) for archive provenance, tests, and integrity checks. This is a beta source submission, not a final GitHub Release. Broader compatibility testing and wallpaper attribution/redistribution review remain; no installable Gruvbox Kanji or RDR bundles or wallpaper images are published here.
+The source is based on the reviewed `dotprofile-v0.6.2-beta-source.tar.gz` archive. See [publication verification](docs/PUBLICATION-REVIEW.md) for archive provenance, tests, and integrity checks. This is a beta source distribution; see [GitHub Releases](https://github.com/GPKinze/dotprofile/releases) for versioned snapshots when available. Broader compatibility testing and wallpaper attribution/redistribution review remain; no installable Gruvbox Kanji or RDR bundles or wallpaper images are published here.
 
 ---
 
