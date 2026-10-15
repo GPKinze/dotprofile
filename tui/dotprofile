@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ENGINE="${DOTPROFILE_ENGINE:-$HOME/.local/share/dotprofile/engine/profilectl.py}"
+if [[ ! -f "$ENGINE" ]]; then
+  echo "Profile engine not found: $ENGINE" >&2; echo 'Run ./install.sh to install the manager.' >&2; exit 1
+fi
+if [[ "${1:-}" == --version ]]; then python3 "$ENGINE" --version; exit; fi
+if ! command -v gum >/dev/null 2>&1; then
+  echo 'Gum is required for the TUI. Install with: sudo pacman -S --needed gum' >&2
+  exit 1
+fi
+run() { python3 "$ENGINE" "$@"; }
+notify() { local txt="$1"; gum style --foreground 10 "$txt"; }
+# Opt-in lasts only for this operation, never a profile or saved preference.
+preview_with_propagation_choice() {
+  propagation_args=()
+  local preview
+  preview="$(run "$1" "$2" --dry-run)" || return 1
+  printf '%s\n' "$preview"
+  if [[ "$preview" == *'Noctalia propagation blocked'* ]]; then
+    if gum confirm 'Allow Noctalia propagation for this operation? Your existing templates may rewrite app configs and your existing hooks may run commands. Their settings stay unchanged; external effects cannot be rolled back.' --default=false; then
+      propagation_args=(--allow-noctalia-propagation)
+      run "$1" "$2" --dry-run "${propagation_args[@]}" || return 1
+    fi
+  fi
+}
+profile_selection() {
+  case "$1" in
+    'Default: '*) printf 'default:%s\n' "${1#Default: }" ;;
+    'Personal: '*) printf 'personal:%s\n' "${1#Personal: }" ;;
+    *) printf '%s\n' "$1" ;;
+  esac
+}
+choose_profile() {
+  local available display
+  available="$(run list --labels)" || return 1
+  [[ -n "$available" ]] || { gum style 'No profiles available.' >&2; return 1; }
+  display="$(printf '%s\n' "$available" | gum choose --header "$1")" || return 1
+  profile_selection "$display"
+}
+while true; do
+  item="$(printf '%s\n' \
+    'Switch Profile' 'Save As — current appearance' 'Manage profiles' 'Export a profile' 'Import a Personal profile' \
+    'Restore desktop appearance from a backup' 'See active profile' 'Quit' |
+    gum choose --header 'Dotprofile v0.6 — Noctalia + Umbriel' --height 12)" || exit 0
+  case "$item" in
+    'Switch Profile'|'Switch desktop appearance')
+      choice="$(choose_profile 'Switch Profile — Default / Personal')" || continue
+      preview_with_propagation_choice apply "$choice" || continue
+      gum confirm "Apply $choice? Plugins and keybindings remain unchanged. WARNING: profile may restyle workspace indicators and rename existing five workspaces (1–5). A backup will be saved." || continue
+      run apply "$choice" "${propagation_args[@]}"; gum input --placeholder 'Press Enter to continue' >/dev/null || true
+      ;;
+    'Save As — current appearance'|'Save my current appearance')
+      name="$(gum input --header 'Save As a Personal profile: use a NEW name for customized Defaults; may include five workspace names' --placeholder 'gruvbox-kanji')" || continue
+      [[ -n "$name" ]] || continue
+      save_args=()
+      if [[ "$name" == default:* ]]; then gum style 'Default originals are read-only. Use Save As with a new Personal name.'; continue; fi
+      name="${name#personal:}"
+      if run list | grep -Fqx "personal:$name"; then
+        gum confirm "Overwrite Personal $name? Its previous package will be backed up. Default originals stay unchanged." --default=false || continue
+        save_args+=(--overwrite --confirm)
+      fi
+      if gum confirm 'Bundle wallpapers? Only include images you have permission to redistribute.' --default=false; then
+        save_args+=(--include-wallpaper)
+      fi
+      run save "personal:$name" "${save_args[@]}"
+      gum input --placeholder 'Press Enter to continue' >/dev/null || true
+      ;;
+    'Import a Personal profile'|'Install a local profile')
+      folder="$(gum input --header 'Enter the path of a profile directory' --placeholder './profiles/gruvbox-kanji')" || continue
+      [[ -n "$folder" ]] || continue
+      run install-profile "$folder"
+      ;;
+    'Manage profiles')
+      choice="$(choose_profile 'Manage profiles — Default originals are read-only')" || continue
+      if [[ "$choice" == default:* ]]; then gum style 'Default originals cannot be renamed, deleted, or overwritten. Customize your desktop and use Save As with a new Personal name.'; continue; fi
+      action="$(printf '%s\n' 'Rename' 'Delete' | gum choose --header "Manage $choice")" || continue
+      if [[ "$action" == Rename ]]; then
+        new_name="$(gum input --header 'New Personal profile ID')" || continue
+        [[ -n "$new_name" ]] || continue
+        gum confirm "Rename $choice to $new_name? A package backup will be saved; your desktop stays unchanged." --default=false || continue
+        run rename "$choice" "personal:$new_name" --confirm
+      else
+        gum confirm "Delete $choice? A recoverable package backup will be saved; your desktop stays unchanged." --default=false || continue
+        run delete "$choice" --confirm
+      fi
+      ;;
+    'Export a profile')
+      choice="$(choose_profile 'Export Default or Personal profile')" || continue
+      folder="$(gum input --header 'Destination directory outside managed profile storage')" || continue
+      [[ -n "$folder" ]] || continue
+      run export "$choice" "$folder"
+      ;;
+    'Restore desktop appearance from a backup'|'Restore from a backup')
+      available="$(run backups)" || exit 1
+      [[ -n "$available" ]] || { gum style 'No backups yet.'; continue; }
+      choice="$(printf '%s\n' "$available" | gum choose --header 'Select recovery snapshot')" || continue
+      preview_with_propagation_choice restore "$choice" || continue
+      gum confirm "Restore approved appearance from $choice? All current plugin settings, installations, and placements will be kept; incompatible layouts will be skipped." || continue
+      run restore "$choice" "${propagation_args[@]}"
+      ;;
+    'See active profile') run status; gum input --placeholder 'Press Enter to continue' >/dev/null || true ;;
+    *) exit 0 ;;
+  esac
+done

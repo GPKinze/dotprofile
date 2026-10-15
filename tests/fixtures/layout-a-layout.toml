@@ -1,0 +1,100 @@
+# Synthetic regression fixture; never a personal desktop export.
+[bar.Main]
+auto_hide = false
+border = "outline"
+border_width = 0.0
+capsule = false
+capsule_border_width = 1.0
+capsule_fill = "surface_variant"
+capsule_opacity = 1.0
+capsule_padding = 6.0
+compositor_blur = true
+concave_edge_corners = true
+contact_shadow = false
+enabled = true
+font_scale = 1.0
+font_weight = 500
+hover_highlight = true
+layer = "top"
+margin_edge = 0
+margin_opposite_edge = 0
+padding = 14
+panel_overlap = 1
+position = "top"
+reserve_space = true
+scale = 1.0
+shadow = true
+show_on_workspace_switch = true
+smart_auto_hide = false
+thickness = 34
+widget_spacing = 6
+start = ["bracket_open", "launcher", "workspaces", "bracket_close"]
+center = ["group:g1"]
+end = ["bracket_open", "volume", "notifications", "tray", "bracket_close"]
+background_opacity = 0.8
+margin_ends = 48
+radius = 16
+radius_top_left = 16
+radius_top_right = 16
+radius_bottom_left = 16
+radius_bottom_right = 16
+capsule_thickness = 0.8
+
+[[bar.Main.capsule_group]]
+accordion = false
+accordion_direction = "end"
+border = "secondary"
+border_width = 1.5
+enabled = true
+id = "g1"
+members = ["clock", "audio_visualizer", "weather"]
+opacity = 1.0
+padding = 6.0
+radius = 5.0
+fill = "surface_variant"
+
+[widget.bracket_open]
+text = "【"
+type = "text"
+
+[widget.launcher]
+glyph = "app-window"
+type = "launcher"
+
+[widget.workspaces]
+empty_color = "outline"
+focused_color = "on_surface"
+label_source = "name"
+occupied_color = "secondary"
+show_labels = true
+style = "minimal"
+type = "workspaces"
+font_scale = 1.0
+font_weight = 500
+scale = 1.0
+
+[widget.bracket_close]
+text = "】"
+type = "text"
+
+[widget.clock]
+type = "clock"
+
+[widget.audio_visualizer]
+type = "audio_visualizer"
+
+[widget.weather]
+show_condition = false
+type = "weather"
+
+[widget.volume]
+font_scale = 0.8
+type = "volume"
+
+[widget.notifications]
+hide_when_no_unread = true
+type = "notifications"
+
+[widget.tray]
+drawer = true
+type = "tray"

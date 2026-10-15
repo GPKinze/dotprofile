@@ -23,29 +23,30 @@ Dotprofile is an **independent personal project**, not officially affiliated wit
 
 The idea is simple: **save an appearance, try another, and return to the one you like**—without replacing your personal setup.
 
-### Planned TUI
+### TUI
 
 ```text
 Desktop Profile Manager
 ❯ Switch Profile
-  Save Current Appearance
-  Import Profile
-  Export Profile
-  Restore Previous Configuration
-  Manage Profiles
-  Exit
+  Save As — current appearance
+  Manage profiles
+  Export a profile
+  Import a Personal profile
+  Restore desktop appearance from a backup
+  See active profile
+  Quit
 ```
 
 | Action | Purpose |
 | --- | --- |
 | **Switch Profile** | Preview and apply a saved appearance |
-| **Save Current Appearance** | Capture supported appearance settings into a personal profile |
-| **Import Profile** | Add a shared profile to your local library; **does not apply it** |
-| **Export Profile** | Package a profile for sharing or backup |
-| **Restore Previous Configuration** | Restore the backup made before applying a profile |
-| **Manage Profiles** | View, rename, or delete personal profiles |
+| **Save As — current appearance** | Capture supported appearance settings into a personal profile |
+| **Import a Personal profile** | Add a shared profile to your local library; **does not apply it** |
+| **Export a profile** | Package a profile for sharing or backup |
+| **Restore desktop appearance from a backup** | Restore approved appearance while retaining current plugins and unrelated settings |
+| **Manage profiles** | View, rename, or delete personal profiles |
 
-This menu describes the **intended user experience**. Some options are still being developed; see [Project status](#project-status).
+These workflows are implemented in the **v0.6.2-beta source**. The menu uses Default/Personal labels and previews appearance changes before confirmation. See [Project status](#project-status) for beta limits.
 
 ## What's in a profile?
 
@@ -71,14 +72,14 @@ Shared profiles use **workspaces 1–5** by default. For example, `gruvbox-kanji
 
 ### Default vs. personal profiles
 
-The **planned** profile-library design keeps official default profiles protected, so anyone can return to the original appearance.
+The profile library keeps release-owned **Default** profiles separate from **Personal** profiles. Default originals are read-only through both the engine and TUI. This beta ships only the small `example-minimal` default; Gruvbox Kanji and RDR remain documentation-only drafts.
 
 ```text
-gruvbox-kanji           # shared default — protected
-gruvbox-kanji-personal  # your customized copy
+default:example-minimal  # release-owned original — protected
+personal:my-appearance   # your customized copy
 ```
 
-Apply a default, adjust your desktop with Umbriel or Noctalia, then **Save As** a personal profile. Personal profiles can be managed by their owners; defaults should not be overwritten, renamed, or deleted through Dotprofile.
+Apply a default, adjust your desktop with Umbriel or Noctalia, then **Save As** a personal profile. Personal profiles can be managed by their owners; defaults cannot be overwritten, renamed, or deleted through Dotprofile.
 
 ## What Dotprofile leaves alone
 
@@ -92,11 +93,13 @@ Apply a default, adjust your desktop with Umbriel or Noctalia, then **Save As** 
 
 **Already use Noctalia templates?** They stay configured as you chose. When a wallpaper or palette changes, **Noctalia itself may automatically update applications** through those templates. Dotprofile does not manage them, but this normal Noctalia behavior can modify application files.
 
+The beta skips wallpaper/palette propagation when existing templates or hooks could run, unless you explicitly opt in for that operation. The opt-in does not permit changes to their configuration; external template/hook effects cannot be rolled back. See the [safety policy](docs/SAFETY.md) and [technical usage guide](docs/USAGE.md).
+
 When Dotprofile cannot safely apply part of a profile, it should **skip that change and explain why**, rather than silently change unrelated settings.
 
 ## Safety and recovery
 
-The project aims to provide:
+The beta provides:
 
 - **Preview and validation** before applying appearance changes.
 - **Automatic backups** and a recovery path.
@@ -105,6 +108,22 @@ The project aims to provide:
 - **No executable scripts or hooks** bundled inside shared profiles.
 
 Keep your own backup of working Umbriel and Noctalia configurations before experimenting. A successful export or dry run does not guarantee that live switching will behave correctly on every setup.
+
+## Installation (v0.6.2-beta)
+
+Requires **Linux, Python 3.11+, `tomlkit`, Gum, Umbriel, and Noctalia**. The reviewed schema tests use Noctalia **5.2.1** and Umbriel **0.1.0**; broader compatibility is still beta testing. On Arch/CachyOS, the interactive installer can offer only missing Python/tomlkit/Gum dependencies. It does not install Umbriel, Noctalia, application themes, or unrelated applications.
+
+```fish
+git clone --branch release/v0.6.2-beta --single-branch https://github.com/GPKinze/dotprofile.git
+cd dotprofile
+./install.sh
+fish_add_path ~/.local/bin
+dotprofile --version
+```
+
+Installation copies the manager and curated default without applying a profile. Existing personal profiles and desktop settings are preserved. Before upgrading an existing installation, run `./install.sh --check`; with dependencies available, `./install.sh --upgrade` updates the manager with backups. Do not run the installer as root.
+
+For profile previews, export/import, propagation opt-in, workspace warnings, recovery limits, and developer checks, see [docs/USAGE.md](docs/USAGE.md). The only installable example in this beta is `example-minimal`; no wallpapers or personal profile packages are included. The two theme folders below remain documentation drafts.
 
 ## Profile documentation
 
@@ -127,9 +146,9 @@ When profile submissions open, contributors will be able to suggest new themes t
 ## Project status
 
 > [!CAUTION]
-> **In development — v0.6.2 beta preparation.** The maintainer reports **153 automated tests** and **31 isolated native layout checks** passing. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. Broader compatibility, distribution safety, and clean-install testing remain before publication.
+> **Source beta — v0.6.2-beta.** The independently reviewed engine, TUI, installer, automated tests, synthetic fixtures, and safety documentation are now included for pull-request review. **153 automated tests** and **31 isolated native layout operations** pass. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. These maintainer-specific results do not establish broader hardware compatibility; runtime IPC in the automated checks is simulated or suppressed.
 
-This repository currently contains **documentation only**. Tested source code, installation instructions, and official downloadable profiles will be added after verification.
+The source is based on the reviewed `dotprofile-v0.6.2-beta-source.tar.gz` archive. See [publication verification](docs/PUBLICATION-REVIEW.md) for archive provenance, tests, and integrity checks. This is a beta source submission, not a final GitHub Release. Broader compatibility testing and wallpaper attribution/redistribution review remain; no installable Gruvbox Kanji or RDR bundles or wallpaper images are published here.
 
 ---
 
