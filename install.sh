@@ -25,7 +25,7 @@ if [[ "$mode" == --check ]]; then
     if installed_version="$(python3 "$root/engine/profilectl.py" --version 2>/dev/null)"; then
       printf 'Installed: %s\n' "$installed_version"
     else
-      echo 'Installed manager predates --version; v0.6.2-beta upgrade available.'
+      echo 'Installed manager predates --version; v0.6.3-beta upgrade available.'
     fi
   fi
   echo 'Dependencies available; check made no changes.'
@@ -59,7 +59,7 @@ if want 'Desktop Profile Manager (TUI + engine)'; then
   python3 engine/profilectl.py --version
   bash -n tui/dotprofile
   mkdir -p "$root/engine" "$bin" "$root/upgrade-backups"
-  snapshot="$(mktemp -d "$root/upgrade-backups/v0.6.2-beta-$(date +%Y%m%d-%H%M%S)-XXXXXX")"
+  snapshot="$(mktemp -d "$root/upgrade-backups/v0.6.3-beta-$(date +%Y%m%d-%H%M%S)-XXXXXX")"
   for file in engine tui; do
     if [[ "$file" == engine ]]; then target="$root/engine/profilectl.py"; else target="$bin/dotprofile"; fi
     if [[ -e "$target" ]]; then cp -p "$target" "$snapshot/$file"; else touch "$snapshot/$file.absent"; fi
@@ -87,7 +87,7 @@ if want 'Desktop Profile Manager (TUI + engine)'; then
   python3 "$root/engine/profilectl.py" --version
   NDP_DEFAULT_ROOT="$root/defaults" NDP_STATE_ROOT="$install_home/.local/state/dotprofile" python3 engine/profilectl.py install-defaults defaults
   changed=false
-  echo "Installed Dotprofile v0.6.2-beta. Manager backup: $snapshot"
+  echo "Installed Dotprofile v0.6.3-beta. Manager backup: $snapshot"
 fi
 if want 'Install local appearance profiles (choose separately)'; then
   mapfile -t dirs < <(find profiles -mindepth 2 -maxdepth 2 -name profile.toml -printf '%h\n' | sort)

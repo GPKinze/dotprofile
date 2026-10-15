@@ -1,12 +1,12 @@
-# Dotprofile v0.6.2-beta — Noctalia + Umbriel appearance profiles
+# Dotprofile v0.6.3-beta — Noctalia + Umbriel appearance profiles
 
 A TUI appearance profile manager for CachyOS / Arch. Save approved desktop appearance fields as portable TOML, then merge them into an existing desktop. Requires Python 3.11+, `tomlkit`, and Gum; importing requires Noctalia and Umbriel with their configuration validators.
 
 > **Warning: importing a profile can restyle workspace indicators and rename workspaces 1–5.** Synthetic examples use **一 二 三 四 五** and decorative **【 】**. Names apply only to existing outputs with five distinct static workspace names and `min_workspaces <= 5`. Dynamic or incompatible outputs are skipped with a warning. Keybindings, workspace counts, monitor settings, and workspace behavior are preserved.
 
-This is the first public **beta**, based on the tested v0.6.2 implementation. Schema checks use Noctalia **5.2.1** and Umbriel **0.1.0**; runtime IPC is simulated in automated tests. Review dry-run warnings before applying profiles. No wallpapers or personal profile packages are distributed.
+This **v0.6.3-beta development update** includes the native capsule radius fix and the wallpaper-free RDR Personal example. Schema checks use Noctalia **5.2.1** and Umbriel **0.1.0**; runtime IPC is simulated in automated tests. Review dry-run warnings before applying profiles. No wallpapers, preview images, or private configurations are distributed. RDR is an explicitly sanitized Personal appearance package.
 
-Run the following commands from the repository root, not from `docs/`. For first-time installation and prerequisites, see the [project README](../README.md#installation-v062-beta).
+Run the following commands from the repository root, not from `docs/`. For first-time installation and prerequisites, see the [project README](../README.md#installation-v063-beta).
 
 ## Upgrade (Fish compatible)
 
@@ -75,6 +75,8 @@ A widget ID is resolved through `[widget.ID].type`, falling back to the native I
 Exports omit all plugin settings and plugin placements. A capsule containing a plugin or unknown member is omitted entirely, even when it also contains native widgets.
 
 On import, switching, and restoration, protected widgets retain their **bar, lane, relative order, reference count, and capsule membership**. Built-in widget placements may be added, removed, duplicated, or moved between lanes and native capsules. Decorative bracket instances can be created from approved definitions. Existing resolved types cannot be retargeted. Plugin indices are retained when enough native placements remain; removing native neighbors can change numeric indices, while plugin lane/order stays fixed.
+
+For a safely accepted complete native group snapshot, omitting the optional `radius` removes a previous explicit native radius so Noctalia chooses automatic rounding. The snapshot must contain `id`, `members`, `enabled`, `fill`, `border`, `border_width`, `opacity`, `padding`, `accordion`, and `accordion_direction`, and be part of a validated three-lane layout. Sparse legacy groups retain omitted fields. No other omitted appearance fields are reset, and protected groups remain untouched.
 
 A complete native layout supplies all three lanes. Its lanes and dependent capsule changes are planned together, checked for protected-placement preservation, then committed together. Native `group:g1` may safely change membership between the synthetic A and B layouts. A group ID that belongs to a plugin/mixed/unknown capsule or an unresolved existing token cannot be claimed by a profile. Native members shared with any protected capsule are frozen too, including their widget settings. Unknown group fields, inactive group rows, and removed native instance definitions remain stored so unrelated settings survive.
 
@@ -158,7 +160,7 @@ profiles/PROFILE_ID/
   lockscreen.png     # optional bundled asset
 ```
 
-The official `defaults/example-minimal` is an appearance-only Default without workspace names. The legacy source example under `profiles/example-minimal` is available for explicit Personal import; official status comes only from the separate Default namespace and release catalogue. The documented Gruvbox Kanji and RDR folders contain README files only; they are not installable profile packages. `review-copy` below is a temporary profile ID, not a shipped folder.
+The official `defaults/example-minimal` is an appearance-only Default without workspace names. The legacy source example under `profiles/example-minimal` is available for explicit Personal import; official status comes only from the separate Default namespace and release catalogue. The `profiles/rdr` folder is an installable, wallpaper-free Personal example. Gruvbox Kanji remains documentation-only. `review-copy` below is a temporary profile ID, not a shipped folder.
 
 Launch `dotprofile` to save, install a local profile, review/apply a profile, inspect the active profile, or restore a backup. Equivalent engine commands:
 
@@ -173,6 +175,21 @@ python3 engine/profilectl.py restore BACKUP_ID --dry-run
 ```
 
 Applying or restoring is a separate explicit action. Review and approve it in the TUI. `restore` merges approved appearance from a snapshot into the **current** desktop. It never restores historical plugin settings, installation state, placements, capsule membership, keybindings, or unrelated fields. Plugins installed, removed, moved, or edited since a backup remain as they are now. Unsafe layout restoration is skipped with a warning. v0.6 snapshots include permitted effective Noctalia defaults; for older snapshots, absent appearance overrides are retained and reported.
+
+## Install the wallpaper-free RDR Personal example
+
+From the repository root, with the manager installed:
+
+```fish
+python3 engine/profilectl.py install-profile ./profiles/rdr
+python3 engine/profilectl.py apply personal:rdr --dry-run
+```
+
+Import copies the package into the Personal library and **does not apply it**. Use **Switch Profile → Personal: rdr** to preview and confirm separately. An existing Personal `rdr` is refused by default; retain it unless you deliberately choose confirmed replacement with a backup. No replacement is part of an upgrade.
+
+RDR's center `group:g1` contains exactly `launcher` and `workspaces`. Its complete native group omits `radius` to use Noctalia's automatic pill rounding, including after a boxy native layout. RDR is not in the immutable Default catalogue. It supplies Roman labels **Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ** for compatible five-workspace outputs; keybindings and workspace behavior remain protected.
+
+The published package has no wallpaper section, lockscreen wallpaper override, asset reference, or image. Importing/applying it makes no wallpaper IPC request and leaves wallpaper paths/options untouched. Its `theme.source = "wallpaper"` uses the recipient's current wallpaper for colors, so appearance can differ from the author's desktop. Existing templates/hooks can react to palette selection; the ordinary default-safe propagation guard still applies. It uses `Geist Mono` if installed; font availability and schema differences can affect the result. See [RDR documentation](../profiles/rdr/README.md) for the wallpaper source link and redistribution status.
 
 ## Import safeguards and limits
 
@@ -190,10 +207,11 @@ Applying or restoring is a separate explicit action. Review and approve it in th
 ```fish
 python3 -m unittest discover -s tests -v
 bash -n install.sh tui/dotprofile
-# Optional: installed Noctalia/Umbriel validators, isolated desktop copies only
+python3 tests/verify_rdr_package.py
+# Optional: installed Noctalia/Umbriel validators, synthetic temporary configs only
 python3 tests/native_layout_roundtrip.py
 ```
 
-Tests cover universal plugin preservation during import/export/switching/restoration, the synthetic case-sensitive `Main` bar, capsule AoT, duplicate decorations, plugin aliases and collisions, protected group membership, workspace names, old formats, field validation, backups, rollback, concurrent edits, and isolated installer upgrades. The synthetic layout A → B → A regression and all twelve position transitions (including bottom → left → bottom) check native layouts, groups, geometry, and plugin invariants. Native integration validation is described in [the archive review](RELEASE-REVIEW.md); the exclusion, propagation, and immutable-default policies are documented in [the safety policy](SAFETY.md). Wallpaper regressions use simulated IPC only, including an isolated command-line test with real installed validators; see [the archive review](RELEASE-REVIEW.md). Tests never apply profiles or send wallpaper/reload IPC to a running desktop. Test hardware names, paths, plugin settings, and images are synthetic.
+Tests cover universal plugin preservation during import/export/switching/restoration, the synthetic case-sensitive `Main` bar, capsule AoT, duplicate decorations, plugin aliases and collisions, protected group membership, workspace names, old formats, field validation, backups, rollback, concurrent edits, and isolated installer upgrades. The synthetic layout A → B → A → B and backup-restoration regression and all twelve position transitions (including bottom → left → bottom) check native layouts, groups, geometry, and plugin invariants. Native integration validation is described in [the archive review](RELEASE-REVIEW.md); the exclusion, propagation, and immutable-default policies are documented in [the safety policy](SAFETY.md). Wallpaper regressions use simulated IPC only, including an isolated command-line test with real installed validators; see [the archive review](RELEASE-REVIEW.md). Tests never apply profiles or send wallpaper/reload IPC to a running desktop. Test hardware names, paths, plugin settings, and images are synthetic.
 
 MIT licensed.

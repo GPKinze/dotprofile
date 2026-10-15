@@ -55,6 +55,9 @@ class LayoutTests(unittest.TestCase):
             for gid, group in p.group_index(bar).items():
                 for key, value in group.items():
                     self.assertEqual(groups[gid][key], value, (gid, key))
+                # These fixtures describe complete groups: absence selects the
+                # native automatic radius, rather than inheriting another look.
+                self.assertEqual(groups[gid].get('radius'), group.get('radius'), (gid, 'radius'))
         for wid, props in requested['widget'].items():
             for key, value in props.items():
                 self.assertEqual(p.widget_type(wid, widgets) if key == 'type' else widgets[wid][key], value)
@@ -68,12 +71,12 @@ class LayoutTests(unittest.TestCase):
         self.assert_native_layout(live, profile)
         return live
 
-    def test_layout_a_layout_b_layout_a_apply_roundtrip(self):
+    def test_gruvbox_rdr_gruvbox_apply_roundtrip(self):
         live = self.current()
         original = self.plugins(live)
         for name in ('layout-a', 'layout-b'):
             self.make(name, n=p.tomlkit.dumps(fixture(name)), u='')
-        for name in ('layout-a', 'layout-b', 'layout-a'):
+        for name in ('layout-a', 'layout-b', 'layout-a', 'layout-b'):
             with self.subTest(profile=name):
                 p.effective_noctalia.return_value = p.parse(self.nfile)
                 message = p.apply(name)
@@ -81,12 +84,129 @@ class LayoutTests(unittest.TestCase):
                 live = p.parse(self.nfile)
                 self.assert_native_layout(live, fixture(name))
                 self.assertEqual(self.plugins(live), original)
-        refs = [v for lane in p.BAR_SECTIONS for v in live['bar']['Main'][lane]]
+                if name == 'layout-a':
+                    kanji = live
+        refs = [v for lane in p.BAR_SECTIONS for v in kanji['bar']['Main'][lane]]
         self.assertEqual(Counter(refs)['bracket_open'], 2)
         self.assertEqual(Counter(refs)['bracket_close'], 2)
         self.assertEqual(p.parse(self.ufile)['keybinds'], p.tomlkit.parse(legacy.UMBRIEL)['keybinds'])
 
-    def test_cold_layout_b_adds_missing_brackets_and_capsule_members(self):
+    def test_radius_only_reset_planned_and_applied_without_other_group_changes(self):
+        live = self.current(fixture('layout-b'))
+        group = live['bar']['Main']['capsule_group'][0]
+        group['radius'] = 5.0
+        before = copy.deepcopy(live)
+        _, groups, _ = p.plan_bar_layout(before['bar']['Main'], fixture('layout-b')['bar']['Main'],
+                                         before['widget'], fixture('layout-b')['widget'], set())
+        self.assertNotIn('radius', groups[0])
+        self.transition(live, fixture('layout-b'))
+        del before['bar']['Main']['capsule_group'][0]['radius']
+        self.assertEqual(live.as_string(), before.as_string())
+
+    def test_radius_reset_preserves_source_comments_unknown_and_other_optional_fields(self):
+        live = self.current(fixture('layout-b'))
+        raw = p.tomlkit.parse('''[[capsule_group]]
+# Keep the native source row, including its unowned fields.
+id = "g1" # group comment
+members = ["launcher", "workspaces"]
+enabled = true
+fill = "primary"
+border = "secondary"
+border_width = 1.0
+opacity = 1.0
+padding = 6.0
+accordion = false
+accordion_direction = "end"
+radius = 5.0 # obsolete explicit override
+foreground = "primary" # unrelated optional appearance
+widget_spacing = 8.0
+future_setting = "keep" # unrecognized source data
+''')['capsule_group'][0]
+        live['bar']['Main']['capsule_group'][0] = raw
+        before = raw.as_string()
+        effective = copy.deepcopy(live)
+        effective['bar']['Main']['capsule_group'][0]['widget_spacing'] = 99.0
+        notes = p.patch_noctalia(live, fixture('layout-b'), effective)
+        self.assertFalse(notes, notes)
+        self.assertEqual(live['bar']['Main']['capsule_group'][0].as_string(),
+                         before.replace('radius = 5.0 # obsolete explicit override\n', ''))
+
+    def test_partial_group_and_legacy_profiles_do_not_reset_omitted_radius(self):
+        for missing in ('enabled', 'fill', 'border', 'border_width', 'opacity',
+                        'padding', 'accordion', 'accordion_direction', 'start', 'center', 'end', 'group'):
+            with self.subTest(missing=missing):
+                live = self.current()
+                before = copy.deepcopy(live['bar']['Main']['capsule_group'][0])
+                profile = fixture('layout-b')
+                if missing in p.BAR_SECTIONS:
+                    del profile['bar']['Main'][missing]
+                elif missing == 'group':
+                    profile = p.tomlkit.parse('[bar.Main]\nthickness=44\n')
+                else:
+                    del profile['bar']['Main']['capsule_group'][0][missing]
+                p.patch_noctalia(live, profile, copy.deepcopy(live))
+                result = live['bar']['Main']['capsule_group'][0]
+                self.assertEqual(result['radius'], 5.0)
+                if missing in p.BAR_SECTIONS or missing == 'group':
+                    self.assertEqual(result.as_string(), before.as_string())
+
+    def test_unknown_mixed_and_shared_native_groups_never_lose_radius(self):
+        for kind in ('future/vendor:plugin', 'clock'):
+            with self.subTest(kind=kind):
+                live = self.current()
+                live['widget']['clock'] = {'type': kind}
+                if kind == 'clock':
+                    live['bar']['Other'] = {'start': [], 'center': ['group:private'], 'end': [],
+                                            'capsule_group': [{'id': 'private', 'members': ['clock', 'status']}]}
+                before = copy.deepcopy(live)
+                notes = p.patch_noctalia(live, fixture('layout-b'), before)
+                self.assertTrue(any('layout transition skipped' in note for note in notes))
+                self.assertEqual(live['bar']['Main']['capsule_group'].as_string(),
+                                 before['bar']['Main']['capsule_group'].as_string())
+                self.assertEqual(self.plugins(live), self.plugins(before))
+
+    def test_radius_reset_does_not_relocate_lower_layer_capsule_array(self):
+        effective = fixture('layout-b')
+        effective['bar']['Main']['capsule_group'][0]['radius'] = 5.0
+        live = copy.deepcopy(effective)
+        del live['bar']['Main']['capsule_group']
+        before = live.as_string()
+        notes = p.patch_noctalia(live, fixture('layout-b'), effective)
+        self.assertTrue(any('lower-layer capsule array' in note for note in notes))
+        self.assertEqual(live.as_string(), before)
+
+    def test_radius_switch_and_backup_restoration_roundtrip_with_current_plugins(self):
+        self.current()
+        p.effective_noctalia.side_effect = lambda: p.parse(self.nfile)
+        for name in ('layout-a', 'layout-b'):
+            self.make(name, n=p.tomlkit.dumps(fixture(name)), u='')
+        snapshots = []
+        for name in ('layout-a', 'layout-b', 'layout-a', 'layout-b'):
+            old = set((self.state/'backups').iterdir()) if (self.state/'backups').exists() else set()
+            p.apply(name)
+            snapshots.append((set((self.state/'backups').iterdir()) - old).pop())
+            self.assert_native_layout(p.parse(self.nfile), fixture(name))
+        current = p.parse(self.nfile)
+        current['widget']['future'] = {'type': 'future/vendor:plugin', 'private': 'new'}
+        current['bar']['Main']['end'].insert(1, 'future')
+        self.nfile.write_text(p.tomlkit.dumps(current))
+        protected = self.plugins(current)
+        u_before = self.ufile.read_bytes()
+        for snapshot, expected in ((snapshots[3], 'layout-a'), (snapshots[2], 'layout-b'),
+                                   (snapshots[1], 'layout-a'), (snapshots[2], 'layout-b')):
+            with self.subTest(restore=expected):
+                before = self.nfile.read_bytes()
+                p.restore(snapshot.name, dry=True)
+                self.assertEqual(self.nfile.read_bytes(), before)
+                message = p.restore(snapshot.name)
+                self.assertNotIn('layout transition skipped', message)
+                actual = p.parse(self.nfile)
+                self.assert_native_layout(actual, fixture(expected))
+                self.assertEqual(self.plugins(actual), protected)
+                self.assertEqual(self.ufile.read_bytes(), u_before)
+        p.wallpaper_set.assert_not_called()
+
+    def test_cold_rdr_adds_missing_brackets_and_capsule_members(self):
         live = fixture('layout-b')
         live['widget']['future'] = {'type': 'future/vendor:new-plugin', 'private': 'keep'}
         live['bar']['Main']['end'].insert(1, 'future')

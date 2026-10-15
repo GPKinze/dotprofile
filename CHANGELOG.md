@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.3-beta — native capsule radius and wallpaper-free RDR
+
+- Remove a stale explicit native capsule radius when an incoming, safely accepted complete group snapshot omits it, restoring Noctalia's automatic pill rounding. Apply the same narrow rule during planning and source-preserving patching; retain sparse legacy patch semantics, other optional fields, comments, unknown data, protected capsules, and lower-layer safeguards.
+- Add round-trip and backup-restoration regressions. Run 159 automated tests and 36 isolated native operations using synthetic temporary configurations, with no live runtime IPC.
+- Publish the corrected RDR appearance as an installable Personal example with `g1 = [launcher, workspaces]` and no explicit group radius. Remove wallpaper/lockscreen asset overrides, private comments, and all images; keep RDR outside the immutable Default catalogue. Preserve recipients' wallpaper configuration and existing Personal profiles.
+- Document RDR installation, Roman labels for compatible workspaces 1–5, wallpaper-derived palette behavior, and unverified wallpaper redistribution rights. Add an isolated package-import check to the existing Python 3.11/3.12 CI workflow and regenerate the source manifest.
+- Prepare a development pull request only; no release or desktop application is performed.
+
 ## 0.6.2-beta — first public source preview
 
 - Package the tested v0.6.2 behavior for review; engine changes are limited to its beta version label.

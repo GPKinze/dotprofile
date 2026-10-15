@@ -42,7 +42,7 @@ while true; do
   item="$(printf '%s\n' \
     'Switch Profile' 'Save As — current appearance' 'Manage profiles' 'Export a profile' 'Import a Personal profile' \
     'Restore desktop appearance from a backup' 'See active profile' 'Quit' |
-    gum choose --header 'Dotprofile v0.6 — Noctalia + Umbriel' --height 12)" || exit 0
+    gum choose --header 'Dotprofile v0.6.3-beta — Noctalia + Umbriel' --height 12)" || exit 0
   case "$item" in
     'Switch Profile'|'Switch desktop appearance')
       choice="$(choose_profile 'Switch Profile — Default / Personal')" || continue
