@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Tests run on isolated GitHub-hosted machines. No secrets or write access.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Python ${{ matrix.python-version }} / offline checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependency
+        run: python -m pip install "tomlkit>=0.12,<1"
+
+      - name: Verify source manifest
+        run: sha256sum -c MANIFEST.sha256
+
+      - name: Validate Bash syntax
+        run: bash -n install.sh tui/dotprofile
+
+      - name: Validate Python syntax without bytecode
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          for base in ("engine", "tests"):
+              for path in sorted(Path(base).rglob("*.py")):
+                  ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+          PY
+
+      - name: Run isolated regression tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -m unittest discover -s tests -v
+
+# Native Noctalia/Umbriel validation and live wallpaper rendering are not
+# covered here. The native integration test self-skips without those tools.
+# No profiles are applied to a user's real desktop.
