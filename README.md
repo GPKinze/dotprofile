@@ -111,8 +111,6 @@ Keep your own backup of working Umbriel and Noctalia configurations before exper
 
 ## Installation (v0.6.3-beta)
 
-Before this PR is merged, use its `dev/v0.6.3-beta` checkout to review the update.
-
 Requires **Linux, Python 3.11+, `tomlkit`, Gum, Umbriel, and Noctalia**. The reviewed schema tests use Noctalia **5.2.1** and Umbriel **0.1.0**; broader compatibility is still beta testing. On Arch/CachyOS, the interactive installer can offer only missing Python/tomlkit/Gum dependencies. It does not install Umbriel, Noctalia, application themes, or unrelated applications.
 
 ```fish
