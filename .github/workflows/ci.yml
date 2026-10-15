@@ -60,6 +60,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: python -m unittest discover -s tests -v
 
+      - name: Verify wallpaper-free RDR Personal import
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python tests/verify_rdr_package.py
+
 # Native Noctalia/Umbriel validation and live wallpaper rendering are not
 # covered here. The native integration test self-skips without those tools.
 # No profiles are applied to a user's real desktop.

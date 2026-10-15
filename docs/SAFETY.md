@@ -1,4 +1,4 @@
-# Dotprofile v0.6.2-beta safety policy
+# Dotprofile v0.6.3-beta safety policy
 
 ## Ownership boundaries
 
@@ -37,6 +37,10 @@ Widget IDs resolve through their configured types. Unknown/plugin types are prot
 Complete native layout changes are staged per bar across all three lanes and capsule definitions. Approved built-in instances (including bracket-only text) can be created, placed, removed from lanes, or moved into/out of native groups. Definitions for removed native placements and inactive group rows are retained; unknown fields and existing types are preserved. Type conflicts, unresolved instance ownership, reused protected group IDs, incomplete lanes, and per-monitor/lower-layer conflicts skip the affected layout transaction with a warning. Mixed capsules and native members shared with protected capsules remain frozen globally, including their settings. Capsule updates patch only approved native source rows; protected rows retain their exact source text rather than acquiring normalized effective-export defaults. No profile can claim an unresolved current group token or widget alias.
 
 Supported containing-bar position/geometry/style changes may apply independently of a skipped widget layout. Top/bottom are horizontal and left/right vertical under Noctalia's schema; moving the bar naturally moves all its contents on screen. Plugins retain lane/order/membership, and their configuration is never rewritten for orientation. Hardware and recipient monitor overrides remain protected; conflicting monitor geometry produces an explicit warning. Newline support is limited to the three approved display-format fields of resolved native clocks. All private-path/interpolation checks and all other scalar-field restrictions remain enforced.
+
+Complete accepted native group snapshots may remove only an omitted optional `radius`, restoring Noctalia's automatic shape. The same rule is applied to the effective plan and the source-row patch. Complete concrete style fields and all three lanes are required; sparse legacy groups keep patch semantics. Unknown fields, other omitted appearance settings, inactive rows and protected capsules remain intact.
+
+The wallpaper-free RDR source example is a Personal package, not an official Default. It excludes wallpaper/lockscreen asset overrides and all images; its palette can still depend on the recipient's current wallpaper and remains subject to the template/hook guard.
 
 The same policy applies to Default and Personal operations. Library edits never apply desktop settings. Defaults do not bypass plugin restrictions; a native widget that has become a plugin on the recipient is protected. An explicit propagation opt-in does not bypass these direct merge protections, though recipient hook commands operate outside Dotprofile's control.
 

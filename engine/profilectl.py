@@ -27,7 +27,7 @@ except ImportError:
     print('Install python-tomlkit (sudo pacman -S python-tomlkit)', file=sys.stderr)
     raise SystemExit(2)
 
-VERSION = '0.6.2-beta'
+VERSION = '0.6.3-beta'
 HOME = Path.home()
 PROFILE_ROOT = Path(os.environ.get('NDP_PROFILE_ROOT', HOME / '.local/share/dotprofile/profiles')).expanduser()
 DEFAULT_ROOT = Path(os.environ.get('NDP_DEFAULT_ROOT', HOME / '.local/share/dotprofile/defaults')).expanduser()
@@ -103,6 +103,11 @@ BRACKET_WIDGET_KEYS = COMMON_INDICATOR_KEYS | frozenset(('type', 'text'))
 # actions, commands, devices, paths, anchors, capsule_group, or plugin tables.
 GROUP_KEYS = frozenset(('enabled', 'fill', 'foreground', 'border', 'border_width',
     'radius', 'opacity', 'padding', 'widget_spacing', 'accordion', 'accordion_direction'))
+# Noctalia's complete exported native group contains these concrete fields.
+# Radius, foreground and widget_spacing may be absent. Sparse legacy patches
+# must not acquire reset semantics just because they identify a group.
+GROUP_SNAPSHOT_KEYS = frozenset(('id', 'members', 'enabled', 'fill', 'border',
+    'border_width', 'opacity', 'padding', 'accordion', 'accordion_direction'))
 WIDGET_KEYS = {
     'launcher': {'glyph'},
     'clock': {'format', 'vertical_format', 'tooltip_format'},
@@ -632,6 +637,18 @@ def anchored_lane(old, desired, protected):
     return result
 
 
+def patch_native_group(entry, incoming):
+    """Patch an already approved group in a complete, accepted lane layout."""
+    # Only a complete native style snapshot owns an omitted optional radius.
+    # Remove its override to select Noctalia's automatic geometry; other
+    # omitted fields, unknown settings and source trivia remain recipient-owned.
+    if GROUP_SNAPSHOT_KEYS <= set(incoming) and 'radius' not in incoming:
+        entry.pop('radius', None)
+    for key, value in incoming.items():
+        if key != 'id' and entry.get(key) != value:
+            entry[key] = copy.deepcopy(value)
+
+
 def plan_bar_layout(old, requested, widgets, profile_widgets, frozen):
     """Plan complete native lanes and capsules without altering protected containers.
 
@@ -708,9 +725,7 @@ def plan_bar_layout(old, requested, widgets, profile_widgets, frozen):
             groups.append(entry)
         else:
             entry = planned_groups[gid]
-            for key, value in incoming[gid].items():
-                if key != 'id' and entry.get(key) != value:
-                    entry[key] = copy.deepcopy(value)
+            patch_native_group(entry, incoming[gid])
     # Prove protected lane/order/count and capsule rows survive before any write.
     for lane in BAR_SECTIONS:
         expected = [v for v in old.get(lane, []) if protected(v)]
@@ -885,9 +900,7 @@ def patch_noctalia(live, profile, effective, allow_noctalia_propagation=False):
                         if gid not in local_index:
                             groups.append(copy.deepcopy(props))
                         else:
-                            for key, value in props.items():
-                                if key != 'id' and local_index[gid].get(key) != value:
-                                    local_index[gid][key] = copy.deepcopy(value)
+                            patch_native_group(local_index[gid], props)
             except ProfileError as error:
                 note.append(f'bar.{target} widget slots skipped (layout transition skipped: {error})')
                 continue

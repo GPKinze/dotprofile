@@ -46,7 +46,7 @@ Desktop Profile Manager
 | **Restore desktop appearance from a backup** | Restore approved appearance while retaining current plugins and unrelated settings |
 | **Manage profiles** | View, rename, or delete personal profiles |
 
-These workflows are implemented in the **v0.6.2-beta source**. The menu uses Default/Personal labels and previews appearance changes before confirmation. See [Project status](#project-status) for beta limits.
+These workflows are implemented in the **v0.6.3-beta source**. The menu uses Default/Personal labels and previews appearance changes before confirmation. See [Project status](#project-status) for beta limits.
 
 ## What's in a profile?
 
@@ -72,7 +72,7 @@ Shared profiles use **workspaces 1–5** by default. For example, `gruvbox-kanji
 
 ### Default vs. personal profiles
 
-The profile library keeps release-owned **Default** profiles separate from **Personal** profiles. Default originals are read-only through both the engine and TUI. This beta ships only the small `example-minimal` default; Gruvbox Kanji and RDR remain documentation-only drafts.
+The profile library keeps release-owned **Default** profiles separate from **Personal** profiles. Default originals are read-only through both the engine and TUI. The only immutable Default remains `example-minimal`. [RDR](profiles/rdr/README.md) is an installable wallpaper-free **Personal** example; Gruvbox Kanji remains documentation-only.
 
 ```text
 default:example-minimal  # release-owned original — protected
@@ -109,7 +109,7 @@ The beta provides:
 
 Keep your own backup of working Umbriel and Noctalia configurations before experimenting. A successful export or dry run does not guarantee that live switching will behave correctly on every setup.
 
-## Installation (v0.6.2-beta)
+## Installation (v0.6.3-beta)
 
 Requires **Linux, Python 3.11+, `tomlkit`, Gum, Umbriel, and Noctalia**. The reviewed schema tests use Noctalia **5.2.1** and Umbriel **0.1.0**; broader compatibility is still beta testing. On Arch/CachyOS, the interactive installer can offer only missing Python/tomlkit/Gum dependencies. It does not install Umbriel, Noctalia, application themes, or unrelated applications.
 
@@ -123,19 +123,19 @@ dotprofile --version
 
 Installation copies the manager and curated default without applying a profile. Existing personal profiles and desktop settings are preserved. Before upgrading an existing installation, run `./install.sh --check`; with dependencies available, `./install.sh --upgrade` updates the manager with backups. Do not run the installer as root.
 
-For profile previews, export/import, propagation opt-in, workspace warnings, recovery limits, and developer checks, see [docs/USAGE.md](docs/USAGE.md). The only installable example in this beta is `example-minimal`; no wallpapers or personal profile packages are included. The two theme folders below remain documentation drafts.
+For profile previews, export/import, propagation opt-in, workspace warnings, recovery limits, and developer checks, see [docs/USAGE.md](docs/USAGE.md). This beta includes the immutable `example-minimal` Default and the wallpaper-free RDR Personal example. Import RDR explicitly with `python3 engine/profilectl.py install-profile ./profiles/rdr`, then review it under **Switch Profile → Personal: rdr**. Importing does not apply it and refuses an existing Personal `rdr` unless replacement is explicitly confirmed with a backup. No wallpaper or preview images are included.
 
 ## Profile documentation
 
-Two appearance profiles are documented for a future curated theme release:
+The following appearance profiles have different publication status:
 
 | Profile | Description | Status |
 | --- | --- | --- |
 | **[Gruvbox Kanji](profiles/gruvbox-kanji/README.md)** | Gruvbox-inspired appearance with five Kanji workspace indicators | Documentation draft |
-| **[RDR](profiles/rdr/README.md)** | Alternate bar layout, wallpaper, and palette | Documentation draft |
+| **[RDR](profiles/rdr/README.md)** | Bottom bar, automatic launcher/workspaces pill capsule, Roman workspace labels, and supported appearance | Installable Personal example; no wallpaper |
 
 > [!NOTE]
-> The maintainer has **confirmed the Wallhaven source links** for both profiles. Original artist attribution and redistribution permissions have **not** been verified. **No wallpaper images or installable profile bundles are published in these folders.** Full profiles will be added only after rights and release-safety review.
+> The maintainer has **confirmed the Wallhaven source links** for both profiles. Original artist attribution and redistribution permissions have **not** been verified. **No wallpaper images are bundled.** RDR ships approved appearance TOML without wallpaper references; Gruvbox Kanji remains documentation-only. Obtain any wallpaper independently and respect its license.
 
 ## Sharing and contributing
 
@@ -146,9 +146,9 @@ When profile submissions open, contributors will be able to suggest new themes t
 ## Project status
 
 > [!CAUTION]
-> **Source beta — v0.6.2-beta.** This repository includes the reviewed engine, TUI, installer, automated tests, synthetic fixtures, and safety documentation. **153 automated tests** and **31 isolated native layout operations** pass. Live switching between Gruvbox Kanji and RDR, including wallpaper application and backup restoration, has also been tested successfully on the maintainer's own setup. These maintainer-specific results do not establish broader hardware compatibility; runtime IPC in the automated checks is simulated or suppressed.
+> **Source beta — v0.6.3-beta.** This update fixes explicit native capsule radius leaking into an incoming automatic pill layout and publishes the wallpaper-free RDR Personal example. **159 automated tests**, **36 isolated native layout operations**, and isolated RDR import checks pass locally. GitHub Actions runs offline checks on Python 3.11 and 3.12; native validators are not installed in CI. Native tests use synthetic temporary configurations, with runtime IPC simulated or suppressed. Broader hardware compatibility remains beta testing.
 
-The source is based on the reviewed `dotprofile-v0.6.2-beta-source.tar.gz` archive. See [publication verification](docs/PUBLICATION-REVIEW.md) for archive provenance, tests, and integrity checks. This is a beta source distribution; see [GitHub Releases](https://github.com/GPKinze/dotprofile/releases) for versioned snapshots when available. Broader compatibility testing and wallpaper attribution/redistribution review remain; no installable Gruvbox Kanji or RDR bundles or wallpaper images are published here.
+The earlier [v0.6.2-beta publication verification](docs/PUBLICATION-REVIEW.md) remains historical provenance. See [v0.6.3-beta verification](docs/V0.6.3-BETA-VERIFICATION.md) for this update and [GitHub Releases](https://github.com/GPKinze/dotprofile/releases) for published snapshots. This development update does not itself create a release. Broader compatibility and wallpaper redistribution review remain.
 
 ---
 

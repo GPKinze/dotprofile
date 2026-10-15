@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline integration against installed validators and synthetic desktop configurations.
+"""Offline integration against installed validators and synthetic configurations.
 
 Writes exclusively to a TemporaryDirectory; reload is replaced with a no-op.
 The running desktop and profile library are never targets of an engine write.
@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from test_layout_switching import LayoutTests, fixture, p, ROOT
+from test_layout_switching import LayoutTests, fixture, p, MAIN
 
 
 def run():
@@ -28,11 +28,12 @@ def run():
         udir = temp/'umbriel'
         udir.mkdir()
         nfile, ufile = state/'noctalia/settings.toml', udir/'config.toml'
-        nfile.write_text((ROOT/'tests/fixtures/main-bar.toml').read_text()+'\n[wallpaper.default]\npath=""\n')
+        nfile.write_text(MAIN+'\n[wallpaper.default]\npath=""\n')
         ufile.write_text('[appearance]\nborder_width=2\n')
         library = temp/'profiles'
         library.mkdir()
-        environment = {'NOCTALIA_CONFIG_HOME': str(config), 'NOCTALIA_STATE_HOME': str(state), 'NDP_NOCTALIA_EXPORT_FILE': ''}
+        environment = {'NOCTALIA_CONFIG_HOME': str(config), 'NOCTALIA_STATE_HOME': str(state),
+                       'NDP_NOCTALIA_EXPORT_FILE': ''}
         with patch.dict(os.environ, environment), patch.multiple(
                 p, PROFILE_ROOT=library, DEFAULT_ROOT=temp/'defaults', STATE_ROOT=temp/'manager-state',
                 NOCTALIA_FILE=nfile, UMBRIEL_FILE=ufile), patch.object(p, 'reload', return_value=[]), patch.object(p, 'wallpaper_set', side_effect=AssertionError('Live wallpaper IPC prohibited during offline layout tests')):
@@ -46,15 +47,32 @@ def run():
                 folder.mkdir()
                 (folder/'profile.toml').write_text(f'id="{profile}"\nname="{profile}"\n')
                 (folder/'noctalia.toml').write_text(p.tomlkit.dumps(fixture(profile)))
-            for profile in ('layout-a','layout-b','layout-a'):
+            snapshots = []
+            for profile in ('layout-a','layout-b','layout-a','layout-b'):
                 message = p.apply(profile, dry=True)
                 if 'layout transition skipped' in message:
                     raise AssertionError(message)
+                old_backups = set((p.STATE_ROOT/'backups').iterdir()) if (p.STATE_ROOT/'backups').exists() else set()
                 message = p.apply(profile)
+                snapshots.append((set((p.STATE_ROOT/'backups').iterdir()) - old_backups).pop())
                 if 'layout transition skipped' in message:
                     raise AssertionError(message)
                 actual = p.effective_noctalia()
                 check.assert_native_layout(actual, fixture(profile))
+                check.assert_native_layout(p.parse(nfile), fixture(profile))
+                check.assertEqual(check.plugins(actual), protected)
+                check.assertEqual(ufile.read_bytes(), u_before)
+                operations += 1
+            # Restore both explicit and automatic radii through actual native
+            # validation/export. IPC remains prohibited throughout the runner.
+            for snapshot, profile in ((snapshots[3], 'layout-a'), (snapshots[2], 'layout-b'),
+                                      (snapshots[1], 'layout-a'), (snapshots[2], 'layout-b')):
+                message = p.restore(snapshot.name)
+                if 'layout transition skipped' in message:
+                    raise AssertionError(message)
+                actual = p.effective_noctalia()
+                check.assert_native_layout(actual, fixture(profile))
+                check.assert_native_layout(p.parse(nfile), fixture(profile))
                 check.assertEqual(check.plugins(actual), protected)
                 check.assertEqual(ufile.read_bytes(), u_before)
                 operations += 1
