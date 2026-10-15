@@ -1,0 +1,95 @@
+# Synthetic regression fixture; never a personal desktop export.
+[bar.Main]
+auto_hide = false
+border = "outline"
+border_width = 0.0
+capsule = false
+capsule_border_width = 1.0
+capsule_fill = "surface_variant"
+capsule_opacity = 1.0
+capsule_padding = 6.0
+compositor_blur = true
+concave_edge_corners = true
+contact_shadow = false
+enabled = true
+font_scale = 1.0
+font_weight = 500
+hover_highlight = true
+layer = "top"
+margin_edge = 0
+margin_opposite_edge = 0
+padding = 14
+panel_overlap = 1
+position = "bottom"
+reserve_space = true
+scale = 1.0
+shadow = true
+show_on_workspace_switch = true
+smart_auto_hide = false
+thickness = 34
+widget_spacing = 6
+start = ["clock", "weather"]
+center = ["group:g1"]
+end = ["volume", "notifications", "tray", "session"]
+background_opacity = 0.9
+margin_ends = 32
+radius = 8
+radius_top_left = 8
+radius_top_right = 8
+radius_bottom_left = 8
+radius_bottom_right = 8
+capsule_thickness = 0.8
+
+[[bar.Main.capsule_group]]
+accordion = false
+accordion_direction = "end"
+border = "secondary"
+border_width = 1.0
+enabled = true
+id = "g1"
+members = ["launcher", "workspaces"]
+opacity = 1.0
+padding = 6.0
+fill = "primary"
+
+[widget.clock]
+type = "clock"
+
+[widget.weather]
+show_condition = false
+type = "weather"
+
+[widget.launcher]
+type = "launcher"
+glyph = "apps"
+
+[widget.workspaces]
+empty_color = "outline"
+focused_color = "on_surface"
+label_source = "name"
+max_label_chars = 4
+occupied_color = "secondary"
+show_labels = true
+style = "minimal"
+type = "workspaces"
+font_scale = 1.15
+font_weight = 500
+scale = 1.0
+
+[widget.volume]
+font_scale = 0.8
+type = "volume"
+
+[widget.notifications]
+hide_when_no_unread = true
+type = "notifications"
+
+[widget.tray]
+drawer = true
+type = "tray"
+
+[widget.session]
+capsule_fill = "error"
+capsule_opacity = 0.5
+capsule_radius = "auto"
+type = "session"

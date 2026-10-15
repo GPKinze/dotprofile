@@ -1,0 +1,102 @@
+# Synthetic regression fixture; never a personal desktop export.
+[bar]
+order = ["Main"]
+
+[bar.Main]
+center = ["group:g1"]
+end = ["bracket_open", "status", "bar", "volume", "recorder_2", "notifications", "tray", "bracket_close"]
+start = ["bracket_open", "launcher", "workspaces", "bracket_close"]
+background_opacity = 0.8
+margin_ends = 48
+radius = 16
+
+[[bar.Main.capsule_group]]
+accordion = false
+accordion_direction = "end"
+border = "secondary"
+border_width = 1.5
+enabled = true
+id = "g1"
+members = ["clock", "audio_visualizer", "weather"]
+opacity = 1.0
+padding = 6.0
+radius = 5.0
+fill = "surface_variant"
+
+[theme]
+builtin = "Noctalia"
+mode = "dark"
+community_palette = ""
+source = "builtin"
+wallpaper_scheme = "m3-tonal-spot"
+
+[lockscreen]
+fingerprint = false
+transition = ["fade"]
+transition_duration = 1200
+
+[shell]
+font_family = "sans-serif"
+polkit_agent = true
+
+[shell.animation]
+enabled = true
+speed = 1.0
+
+[shell.panel]
+transparency_mode = "soft"
+
+[plugins]
+enabled = ["fixture-vendor/recording", "fixture-vendor/operation"]
+
+[plugin_settings."fixture-vendor/connection"]
+battery_display = "percent"
+
+[plugin_settings."fixture-vendor/operation"]
+battery_display = "percent"
+
+[plugin_settings."fixture-vendor/recording"]
+video_source = "focused"
+
+[widget.bar]
+type = "fixture-vendor/connection:bar"
+
+[widget.launcher]
+glyph = "app-window"
+
+[widget.bracket_open]
+text = "【"
+type = "text"
+
+[widget.notifications]
+hide_when_no_unread = true
+
+[widget.recorder_2]
+type = "fixture-vendor/recording:recorder"
+
+[widget.status]
+type = "fixture-vendor/operation:status"
+
+[widget.bracket_close]
+text = "】"
+type = "text"
+
+[widget.tray]
+drawer = true
+
+[widget.volume]
+font_scale = 0.8
+
+[widget.weather]
+show_condition = false
+
+[widget.workspaces]
+empty_color = "outline"
+focused_color = "on_surface"
+label_source = "name"
+occupied_color = "secondary"
+show_labels = true
+style = "minimal"
+font_scale = 1.0
+font_weight = 500
+scale = 1.0
